@@ -13,6 +13,7 @@
 #include "utils.h"
 #include "bt9.h"
 #include "bt9_reader.h"
+#include "predictor_base.h"
 
 #define PHT_CTR_MAX  3
 #define PHT_CTR_INIT 2
@@ -26,7 +27,7 @@
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-class PREDICTOR{
+class PREDICTOR_GSHARE:public PREDICTOR_BASE{
 
   // The state is defined for Gshare, change for your design
 
@@ -39,15 +40,15 @@ class PREDICTOR{
  public:
 
 
-  PREDICTOR(void);
+  PREDICTOR_GSHARE(void);
   //NOTE contestants are NOT allowed to use these versions of the functions
 //ver2   bool    GetPrediction(UINT64 PC, bool btbANSF, bool btbATSF, bool btbDYN);  
 //ver2   void    UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget, bool btbANSF, bool btbATSF, bool btbDYN);
 //ver2   void    TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget);
 
   // The interface to the functions below CAN NOT be changed
-  bool    GetPrediction(UINT64 PC);  
-  void    UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget);
+  virtual bool    GetPrediction(UINT64 PC);  
+  virtual void    UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget);
   void    TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget);
 
   // Contestants can define their own functions below
@@ -66,7 +67,7 @@ class PREDICTOR{
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-PREDICTOR::PREDICTOR(void){
+PREDICTOR_GSHARE::PREDICTOR_GSHARE(void){
 
   historyLength    = HIST_LEN;
   ghr              = 0;
@@ -112,7 +113,7 @@ PREDICTOR::PREDICTOR(void){
 //ver2 }
 
 //NOTE contestants are not allowed to use the btb* information from ver2 of the simulation infrastructure. Interface to this function CAN NOT be changed.
-bool PREDICTOR::GetPrediction(UINT64 PC){
+bool PREDICTOR_GSHARE::GetPrediction(UINT64 PC){
 
   UINT32 phtIndex   = (PC^ghr) % (numPhtEntries);
   UINT32 phtCounter = pht[phtIndex];
@@ -158,7 +159,7 @@ bool PREDICTOR::GetPrediction(UINT64 PC){
 //ver2 }
 
 //NOTE contestants are not allowed to use the btb* information from ver2 of the simulation infrastructure. Interface to this function CAN NOT be changed.
-void  PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget){
+void  PREDICTOR_GSHARE::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool predDir, UINT64 branchTarget){
 
   UINT32 phtIndex   = (PC^ghr) % (numPhtEntries);
   UINT32 phtCounter = pht[phtIndex];
@@ -180,7 +181,7 @@ void  PREDICTOR::UpdatePredictor(UINT64 PC, OpType opType, bool resolveDir, bool
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-void    PREDICTOR::TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget){
+void    PREDICTOR_GSHARE::TrackOtherInst(UINT64 PC, OpType opType, bool branchDir, UINT64 branchTarget){
 
   // This function is called for instructions which are not
   // conditional branches, just in case someone decides to design

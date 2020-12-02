@@ -15,14 +15,17 @@ using namespace std;
 //#include "bt9.h"
 #include "bt9_reader.h"
 //#include "predictor.cc"
-#include "predictor.h"
-
+#include "predictor_base.h"
+#include "predictor_gshare.h"
 
 #define COUNTER     unsigned long long
 // Max Branch Instructions in a single fetch
 #define BRANCH_MAX  4
 // Max Delay Cycles to update the predictor
 #define DELAY_MAX 3
+//Modified by Hujiuxin
+//Max predicted_queue size
+#define MAX_PREQUE_SIZE 100
 
 /* Simulate Mode
  * Mode 0: predict new branch inst until all previous branch inst updates the predictor
@@ -55,7 +58,7 @@ class PredictedEntry {
 // Global Variable
 UINT64 numIter = 0;
 UINT64 numMispred =0;  
-PREDICTOR  *brpred;
+PREDICTOR_BASE  *brpred;
 UINT64 cond_branch_instruction_counter=0;
 UINT64 uncond_branch_instruction_counter=0;
 queue<PredictedEntry> predicted_queue;
@@ -310,7 +313,7 @@ int main(int argc, char* argv[]){
   // Init variables
   ///////////////////////////////////////////////
     
-    brpred = new PREDICTOR();  // this instantiates the predictor code
+    brpred = new PREDICTOR_GSHARE();  // this instantiates the predictor code
   ///////////////////////////////////////////////
   // read each trace recrod, simulate until done
   ///////////////////////////////////////////////
@@ -397,14 +400,23 @@ int main(int argc, char* argv[]){
               Update(predicted_queue.front());
               predicted_queue.pop();
             }
+            //Modified by Hujiuxin
+            //predicted_queue_size limit exceeded
+            if (predicted_queue.size()>=MAX_PREQUE_SIZE) {
+              while(!predicted_queue.empty()) {
+                Update(predicted_queue.front());
+                predicted_queue.pop();
+              }
+            }
           }
         }
         else {
           printf("Simulating in unknown mode!\n");
           exit(-1);
         }
-        if (Rand) 
+        if (Rand) {
           br_num = rand() % BRANCH_MAX;
+        }
         // br_num = rand() % BRANCH_MAX; // br_num: 0 ~ BRANCH_MAX - 1
         // br_num = 1;
         bool predDir;
@@ -460,6 +472,14 @@ int main(int argc, char* argv[]){
             while (!predicted_queue.empty() && cycle >= predicted_queue.front().cycle) {
               Update(predicted_queue.front());
               predicted_queue.pop();
+            }
+            //Modified by Hujiuxin
+            //predicted_queue_size limit exceeded
+            if (predicted_queue.size()>=MAX_PREQUE_SIZE) {
+              while(!predicted_queue.empty()) {
+                Update(predicted_queue.front());
+                predicted_queue.pop();
+              }
             }
           }
         }
