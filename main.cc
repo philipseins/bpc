@@ -16,6 +16,7 @@ using namespace std;
 #include "bt9_reader.h"
 //#include "predictor.cc"
 #include "predictor_base.h"
+#include "predictor_loopc.h"
 #include "predictor_gshare.h"
 
 #define COUNTER     unsigned long long
@@ -313,7 +314,10 @@ int main(int argc, char* argv[]){
   // Init variables
   ///////////////////////////////////////////////
     
-    brpred = new PREDICTOR_GSHARE();  // this instantiates the predictor code
+    //brpred = new PREDICTOR_GSHARE();  // this instantiates the predictor code
+    brpred = new PREDICTOR_LOOPC(4,4);
+
+
   ///////////////////////////////////////////////
   // read each trace recrod, simulate until done
   ///////////////////////////////////////////////
