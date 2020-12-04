@@ -312,10 +312,11 @@ int main(int argc, char* argv[]){
   
   ///////////////////////////////////////////////
   // Init variables
+  // Choose your predictor
   ///////////////////////////////////////////////
     
-    //brpred = new PREDICTOR_GSHARE();  // this instantiates the predictor code
-    brpred = new PREDICTOR_LOOPC(4,4);
+    brpred = new PREDICTOR_GSHARE();  // this instantiates the predictor code
+    //brpred = new PREDICTOR_LOOPC(4,4);
 
 
   ///////////////////////////////////////////////

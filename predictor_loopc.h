@@ -85,7 +85,7 @@ bool PREDICTOR_LOOPC::insert_entry(UINT64 arg_tag,int arg_set) {
         }
     }
     if (!found) {
-        printf("loop count table replaced one entry\n");
+        //printf("loop count table replaced one entry\n");
     }
     existed[arg_set][sub_line] = true;
     tag[arg_set][sub_line] = arg_tag;
@@ -125,7 +125,7 @@ bool PREDICTOR_LOOPC::GetPrediction(UINT64 PC) {
     }
     else {
         insert_entry(_tag,_idx);
-        printf("insert entry: tag=%x,set = %d\n",_tag,_idx);
+        //printf("insert entry: tag=%x,set = %d\n",_tag,_idx);
         return TAKEN;
     }
 }
@@ -138,7 +138,7 @@ void PREDICTOR_LOOPC::UpdatePredictor(UINT64 PC,OpType opType,bool resolveDir,bo
     int _line;
     int hit = find_line(_tag,_idx,_line);
     if (hit == 0) {
-        printf("some wired thing happened\n");
+        //printf("some wired thing happened\n");
         return;
     }
     if (valid[_idx][_line]) {
@@ -158,7 +158,7 @@ void PREDICTOR_LOOPC::UpdatePredictor(UINT64 PC,OpType opType,bool resolveDir,bo
             limit[_idx][_line] = counter[_idx][_line];
             counter[_idx][_line] = 0;
             valid[_idx][_line] = true;
-            printf("valid set,limit is %d\n",limit[_idx][_line]);
+            //printf("valid set,limit is %d\n",limit[_idx][_line]);
         }
     }
     else {
